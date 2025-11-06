@@ -33,7 +33,7 @@ public class AuthController {
   }
   //profile
   @GetMapping("/me")
-  public ResponseEntity<GetUserResponseDTO> getAuthenticatedUser() {
+  public ResponseEntity<GetUserResponseDTO> getAuthUser() {
     GetUserResponseDTO user = new GetUserResponseDTO();
     user.setId(1L);
     user.setName("Test Test");

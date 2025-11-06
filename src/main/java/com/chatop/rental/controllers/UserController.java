@@ -16,7 +16,7 @@ public class UserController {
 
   // GET user by ID
   @GetMapping("/{id}")
-  public ResponseEntity<User> getUserById(@PathVariable Long id) {
+  public ResponseEntity<User> getUser(@PathVariable Long id) {
     if (id == 1L) {
       User user = new User();
       user.setId(id);

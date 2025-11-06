@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/messages")
 public class MessageController {
   @PostMapping
-  public ResponseEntity<MessageResponseDTO> sendMessage(@RequestBody MessageRequestDTO request) {
+  public ResponseEntity<MessageResponseDTO> postMessage(@RequestBody MessageRequestDTO request) {
     MessageResponseDTO response = new MessageResponseDTO("Message send with success : "+request.getMessage());
     return ResponseEntity.ok(response);
   }

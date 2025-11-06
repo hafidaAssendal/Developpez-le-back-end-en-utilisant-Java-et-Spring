@@ -15,7 +15,7 @@ import java.util.List;
 public class RentalController {
 
   @GetMapping
-  public ResponseEntity<List<RentalResponseDTO>> getAllRentals() {
+  public ResponseEntity<List<RentalResponseDTO>> getRentals() {
     List<RentalResponseDTO> rentals = new ArrayList<>();
     // Rental 1
     RentalResponseDTO rental1 = new RentalResponseDTO();
@@ -47,7 +47,7 @@ public class RentalController {
   }
   // GET /rentals/{id}
   @GetMapping("/{id}")
-  public ResponseEntity<RentalResponseDTO> getRentalById(@PathVariable Long id) {
+  public ResponseEntity<RentalResponseDTO> getRental(@PathVariable Long id) {
     if (id == 1L) {
       RentalResponseDTO rental = new RentalResponseDTO();
       rental.setId(1L);
@@ -67,7 +67,7 @@ public class RentalController {
   }
 
   @PostMapping
-  public ResponseEntity<MessageRentalResponseDTO> createRental(
+  public ResponseEntity<MessageRentalResponseDTO> postRental(
     @RequestParam String name,
     @RequestParam BigDecimal price,
     @RequestParam BigDecimal surface,
@@ -85,7 +85,7 @@ public class RentalController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<MessageRentalResponseDTO> updateRental(@PathVariable Long id,
+  public ResponseEntity<MessageRentalResponseDTO> putRental(@PathVariable Long id,
                                                                @RequestParam String name,
                                                                @RequestParam BigDecimal price,
                                                                @RequestParam BigDecimal surface,

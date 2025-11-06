@@ -1,20 +1,22 @@
 package com.chatop.rental.services;
-
 import com.chatop.rental.DTOs.PostRentalRequestDTO;
+import com.chatop.rental.DTOs.RentalResponseDTO;
 import com.chatop.rental.entites.Rental;
 import com.chatop.rental.entites.User;
 import com.chatop.rental.repositories.RentalRepository;
 import com.chatop.rental.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RentalServiceImpl implements RentalService {
@@ -61,4 +63,44 @@ public class RentalServiceImpl implements RentalService {
    // Sauvegarde
     return rentalRepository.save(rental);
   }
+
+  @Override
+  public Rental updateRental(Long id, PostRentalRequestDTO dto) {
+
+    Rental existingRental = rentalRepository.findById(id).orElseThrow(() -> new RuntimeException("Rental not found with id: " + id));
+
+    if (dto.getName() != null) existingRental.setName(dto.getName());
+    if (dto.getPrice() != null) existingRental.setPrice(dto.getPrice());
+    if (dto.getSurface() != null) existingRental.setSurface(dto.getSurface());
+    if (dto.getDescription() != null) existingRental.setDescription(dto.getDescription());
+
+    return rentalRepository.save(existingRental);
+
+
+
+  }
+
+  @Override
+  public Optional<Rental> getRentalById(Long id) {
+    return rentalRepository.findById(id) ;
+  }
+
+  @Override
+  public List<RentalResponseDTO> getAllRentals() {
+
+    return rentalRepository.findAll().stream()// ajouter la liste dans un stream
+      .map(rental -> convertEntityToDto(Optional.ofNullable(rental)))// appliquer la fonction convert pour chaque element avec conversion de rental à optional
+      .collect(Collectors.toList()); // converti en liste;
+  }
+
+  @Override
+  public RentalResponseDTO convertEntityToDto(Optional<Rental> rental) {
+    if (rental.isPresent()) {
+      modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+      return modelMapper.map(rental.get(), RentalResponseDTO.class);
+    }
+    return null; //  rental null
+
+  }
+
 }

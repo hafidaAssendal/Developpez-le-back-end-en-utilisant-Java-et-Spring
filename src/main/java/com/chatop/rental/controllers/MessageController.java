@@ -1,0 +1,16 @@
+package com.chatop.rental.controllers;
+
+import com.chatop.rental.DTOs.MessageRequestDTO;
+import com.chatop.rental.DTOs.MessageResponseDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/messages")
+public class MessageController {
+  @PostMapping
+  public ResponseEntity<MessageResponseDTO> sendMessage(@RequestBody MessageRequestDTO request) {
+    MessageResponseDTO response = new MessageResponseDTO("Message send with success : "+request.getMessage());
+    return ResponseEntity.ok(response);
+  }
+}

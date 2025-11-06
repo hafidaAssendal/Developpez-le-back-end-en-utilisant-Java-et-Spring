@@ -1,7 +1,10 @@
 package com.chatop.rental.controllers;
 
+import com.chatop.rental.DTOs.GetUserResponseDTO;
 import com.chatop.rental.entites.User;
 
+import com.chatop.rental.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,23 +12,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+  @Autowired
+  UserService userService;
 
   // GET user by ID
   @GetMapping("/{id}")
-  public ResponseEntity<User> getUser(@PathVariable Long id) {
+  public ResponseEntity<GetUserResponseDTO> getUser(@PathVariable Long id) {
+
     if (id == 1L) {
-      User user = new User();
-      user.setId(id);
-      user.setName("Owner Name");
-      user.setEmail("test@test.com");
-      user.setPassword("password");
-      user.setCreatedAt(LocalDateTime.of(2022, 2, 2, 0, 0));
-      user.setUpdatedAt(LocalDateTime.of(2022, 8, 2, 0, 0));
-      return ResponseEntity.ok(user);
+      Optional<User> user = userService.getUserById(id);
+      return ResponseEntity.ok(userService.convertEntityToDto(user));
     } else {
       return ResponseEntity.notFound().build();
     }

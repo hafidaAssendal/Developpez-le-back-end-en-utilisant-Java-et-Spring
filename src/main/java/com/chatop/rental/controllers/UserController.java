@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -23,12 +22,11 @@ public class UserController {
   // GET user by ID
   @GetMapping("/{id}")
   public ResponseEntity<GetUserResponseDTO> getUser(@PathVariable Long id) {
-
-    if (id == 1L) {
-      Optional<User> user = userService.getUserById(id);
-      return ResponseEntity.ok(userService.convertEntityToDto(user));
-    } else {
+    Optional<User> user = userService.getUserById(id);
+    if (user.isEmpty()) {   // Si l'utilisateur n'existe pas
       return ResponseEntity.notFound().build();
     }
+    return ResponseEntity.ok(userService.convertEntityToDto(user));
+
   }
 }

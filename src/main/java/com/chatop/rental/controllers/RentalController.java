@@ -1,11 +1,14 @@
 package com.chatop.rental.controllers;
-import com.chatop.rental.DTOs.MessageRentalResponseDTO;
-import com.chatop.rental.DTOs.PostRentalRequestDTO;
-import com.chatop.rental.DTOs.PutRentalRequestDTO;
-import com.chatop.rental.DTOs.RentalResponseDTO;
+
+import com.chatop.rental.DTOs.*;
+import com.chatop.rental.entites.Rental;
+import com.chatop.rental.services.RentalService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/rentals")
 public class RentalController {
+  @Autowired
+  RentalService rentalService;
 
   @GetMapping
   public ResponseEntity<List<RentalResponseDTO>> getRentals() {
@@ -45,6 +50,7 @@ public class RentalController {
     rentals.add(rental2);
     return ResponseEntity.ok(rentals);
   }
+
   // GET /rentals/{id}
   @GetMapping("/{id}")
   public ResponseEntity<RentalResponseDTO> getRental(@PathVariable Long id) {
@@ -67,7 +73,39 @@ public class RentalController {
   }
 
   @PostMapping
-  public ResponseEntity<MessageRentalResponseDTO> postRental(
+  public ResponseEntity<StatusRentalResponseDTO> postRental(
+                                    @ModelAttribute PostRentalRequestDTO rentalDto,
+                                    @RequestParam("picture") MultipartFile file) throws IOException {
+    Rental rental= rentalService.createRental(rentalDto,file);
+   return ResponseEntity.ok(new StatusRentalResponseDTO("Rental created ! : "));
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<StatusRentalResponseDTO> putRental(@PathVariable Long id,
+                                                           @RequestParam String name,
+                                                           @RequestParam BigDecimal price,
+                                                           @RequestParam BigDecimal surface,
+                                                           @RequestParam String description) {
+    if (id == 1) {
+      PutRentalRequestDTO rental = new PutRentalRequestDTO();
+      rental.setName(name);
+      rental.setPrice(price);
+      rental.setSurface(surface);
+      rental.setDescription(description);
+      System.out.println("Rental request :" + rental.toString());
+      return ResponseEntity.ok(new StatusRentalResponseDTO(" rental updated "));
+
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+
+
+  }
+
+
+/*
+  @PostMapping
+  public ResponseEntity<StatusRentalResponseDTO> postRental(
     @RequestParam String name,
     @RequestParam BigDecimal price,
     @RequestParam BigDecimal surface,
@@ -81,29 +119,9 @@ public class RentalController {
     rental.setPicture(file.getOriginalFilename());
     System.out.println("Picture : " + file.getOriginalFilename());
     System.out.println(rental.toString());
-    return ResponseEntity.ok(new MessageRentalResponseDTO("Rental created ! : "));
+    return ResponseEntity.ok(new StatusRentalResponseDTO("Rental created ! : "+rental.toString()));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<MessageRentalResponseDTO> putRental(@PathVariable Long id,
-                                                               @RequestParam String name,
-                                                               @RequestParam BigDecimal price,
-                                                               @RequestParam BigDecimal surface,
-                                                               @RequestParam String description) {
-    if (id == 1) {
-      PutRentalRequestDTO rental = new PutRentalRequestDTO();
-      rental.setName(name);
-      rental.setPrice(price);
-      rental.setSurface(surface);
-      rental.setDescription(description);
-      System.out.println("Rental request :" + rental.toString());
-      return ResponseEntity.ok(new MessageRentalResponseDTO(" rental updated "));
-
-    } else {
-      return ResponseEntity.notFound().build();
-    }
-
-
-  }
+ */
 
 }

@@ -19,12 +19,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+
 public class RentalServiceImpl implements RentalService {
 
   @Autowired
   private RentalRepository rentalRepository;
- @Autowired
- private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
   @Autowired
   private ModelMapper modelMapper;
 

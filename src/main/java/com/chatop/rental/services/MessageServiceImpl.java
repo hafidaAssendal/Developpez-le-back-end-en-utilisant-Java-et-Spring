@@ -1,5 +1,4 @@
 package com.chatop.rental.services;
-
 import com.chatop.rental.DTOs.MessageRequestDTO;
 import com.chatop.rental.DTOs.MessageResponseDTO;
 import com.chatop.rental.entites.Message;
@@ -8,7 +7,6 @@ import com.chatop.rental.entites.User;
 import com.chatop.rental.repositories.MessageRepository;
 import com.chatop.rental.repositories.RentalRepository;
 import com.chatop.rental.repositories.UserRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -28,6 +28,12 @@ public class UserServiceImpl implements  UserService{
     return userRepository.findByEmail(email);
   }
 
+
+  // 🔹 Enregistrer un nouvel utilisateur
+  @Override
+  public User saveUser(User user) {
+    return userRepository.save(user);
+  }
   @Override
   public GetUserResponseDTO convertEntityToDto(Optional<User>  user) {
     if (user.isPresent()) {

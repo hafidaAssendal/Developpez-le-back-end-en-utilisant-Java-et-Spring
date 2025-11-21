@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RentalService {
-  Rental createRental(PostRentalRequestDTO dto, MultipartFile file) throws IOException;
+  Rental createRental(PostRentalRequestDTO dto, MultipartFile file, User authenticatedUser) throws IOException;
 
-  Rental updateRental(Long id, PostRentalRequestDTO dto);
+  Rental updateRental(Long id, PostRentalRequestDTO dto, User authenticatedUser);
 
   Optional<Rental> getRentalById(Long id);
 

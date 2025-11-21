@@ -18,15 +18,13 @@ import java.util.Optional;
 public class UserController {
   @Autowired
   UserService userService;
-
   // GET user by ID
   @GetMapping("/{id}")
   public ResponseEntity<GetUserResponseDTO> getUser(@PathVariable Long id) {
     Optional<User> user = userService.getUserById(id);
-    if (user.isEmpty()) {   // Si l'utilisateur n'existe pas
+    if (user.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok(userService.convertEntityToDto(user));
-
+    return ResponseEntity.ok(userService.convertEntityToDto(user.get()));
   }
 }

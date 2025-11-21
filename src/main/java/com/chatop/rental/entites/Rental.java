@@ -37,6 +37,4 @@ public class Rental {
   private User owner;
   //@Column(name = "owner_id", nullable = false)
     //  private Integer ownerId;*/
-
-
 }

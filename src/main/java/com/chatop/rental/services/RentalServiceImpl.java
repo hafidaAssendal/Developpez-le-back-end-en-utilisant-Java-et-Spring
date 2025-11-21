@@ -8,6 +8,7 @@ import com.chatop.rental.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -40,23 +41,18 @@ public class RentalServiceImpl implements RentalService {
   }
 
   @Override
-  public Rental createRental(PostRentalRequestDTO dto, MultipartFile file) throws IOException {
-
+  public Rental createRental(PostRentalRequestDTO dto, MultipartFile file, User authenticatedUser) throws IOException {
+   // gestion de fichier
     String pictureName = null;
-
     if (file != null && !file.isEmpty()) {
       pictureName = System.currentTimeMillis() + "_" + file.getOriginalFilename(); // éviter doublons
       Path targetLocation = uploadDir.resolve(pictureName);
       Files.copy(file.getInputStream(), targetLocation);
     }
-
     // Conversion DTO → Entity
     Rental rental = modelMapper.map(dto, Rental.class);
     // owner Id
-    User owner = userRepository.findById(1l)
-      .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-    rental.setOwner(owner);
-
+    rental.setOwner(authenticatedUser);
     // Assigner le nom du fichier s’il existe
     if (pictureName != null) {
       rental.setPicture(pictureName);
@@ -66,15 +62,18 @@ public class RentalServiceImpl implements RentalService {
   }
 
   @Override
-  public Rental updateRental(Long id, PostRentalRequestDTO dto) {
+  public Rental updateRental(Long id, PostRentalRequestDTO dto, User authenticatedUser) {
 
     Rental existingRental = rentalRepository.findById(id).orElseThrow(() -> new RuntimeException("Rental not found with id: " + id));
+    // Vérifier l’utilisateur est le propriétaire
+    if (!existingRental.getOwner().getId().equals(authenticatedUser.getId())) {
+      throw new AccessDeniedException("You are not the owner of this rental");
+    }
 
     if (dto.getName() != null) existingRental.setName(dto.getName());
     if (dto.getPrice() != null) existingRental.setPrice(dto.getPrice());
     if (dto.getSurface() != null) existingRental.setSurface(dto.getSurface());
     if (dto.getDescription() != null) existingRental.setDescription(dto.getDescription());
-
     return rentalRepository.save(existingRental);
 
 

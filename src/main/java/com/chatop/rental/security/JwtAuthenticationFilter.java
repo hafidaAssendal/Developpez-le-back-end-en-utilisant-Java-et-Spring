@@ -17,31 +17,37 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
+  private final UserDetailsServiceImpl userDetailsService;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-    throws ServletException, IOException {
+  protected void doFilterInternal(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  FilterChain filterChain) throws ServletException, IOException {
     final String authHeader = request.getHeader("Authorization");
-
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      filterChain.doFilter(request, response); // pas de token, continuer
+      filterChain.doFilter(request, response);
       return;
     }
 
+    String token = authHeader.substring(7);
+    try {
+      String email = jwtService.extractEmail(token);
+      // Charger le UserDetails depuis la BDD
+      var userDetails = userDetailsService.loadUserByUsername(email);
+      // Authentication avec UserDetails
+      UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                                        userDetails,              // principal = UserDetails
+                                                        null,
+                                                        userDetails.getAuthorities()
+                                                      );
 
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-      String token = authHeader.substring(7);
-      try {
-        String email = jwtService.extractEmail(token);
+      SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        UsernamePasswordAuthenticationToken authToken =
-          new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
 
-      } catch (Exception e) {
-        System.out.println("JWT invalid: " + e.getMessage());
-      }
+    } catch (Exception e) {
+      System.out.println("JWT invalid: " + e.getMessage());
     }
+
     filterChain.doFilter(request, response);
   }
 

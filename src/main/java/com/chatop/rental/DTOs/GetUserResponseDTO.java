@@ -17,7 +17,4 @@ public class GetUserResponseDTO {
   private String email;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
-
-
-
 }

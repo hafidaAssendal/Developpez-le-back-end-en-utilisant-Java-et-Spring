@@ -1,27 +1,37 @@
 package com.chatop.rental.security;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import java.util.Date;
+
 @Service
 public class JwtService {
-
+  @Value("${app.secret-key}")
+  private String secretKey;
+  @Value("${app.exp-time}")
+  private long expTime;
 
   public String generateToken(String email) {
-    return Jwts.builder()
+    String token = Jwts.builder()
       .setSubject(email)
-      .setIssuedAt(new Date())
-      .setExpiration(new Date(System.currentTimeMillis() + SecParams.EXP_Time))
-      .signWith(SignatureAlgorithm.HS256, SecParams.SECRET)
+      .setIssuedAt(new Date(System.currentTimeMillis()))
+      .setExpiration(new Date(System.currentTimeMillis() + expTime))
+      .signWith(SignatureAlgorithm.HS256, secretKey)
       .compact();
+
+    System.out.println("JWT généré : " + token);
+    return token;
   }
 
+
   public String extractEmail(String token) {
-    return Jwts.parser().setSigningKey(SecParams.SECRET).parseClaimsJws(token).getBody().getSubject();
+    return Jwts.parser()
+               .setSigningKey(secretKey)
+               .parseClaimsJws(token)
+               .getBody()
+               .getSubject();
   }
 }

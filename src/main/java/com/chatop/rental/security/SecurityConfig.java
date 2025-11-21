@@ -23,22 +23,20 @@ public class SecurityConfig {
     http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .csrf(csrf->csrf.disable())
         .cors(cors -> cors.configurationSource(new CorsConfigurationSource()
-      {
-        @Override
-        public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-          CorsConfiguration cors = new CorsConfiguration();
-
-          cors.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-          cors.setAllowedMethods(Collections.singletonList("*"));
-          cors.setAllowedHeaders(Collections.singletonList("*"));
-          cors.setExposedHeaders(Collections.singletonList("Authorization"));
-          return cors;
-        }
-      }))
+                                                {
+                                                  @Override
+                                                  public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                                                    CorsConfiguration cors = new CorsConfiguration();
+                                                    cors.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                                                    cors.setAllowedMethods(Collections.singletonList("*"));
+                                                    cors.setAllowedHeaders(Collections.singletonList("*"));
+                                                    cors.setExposedHeaders(Collections.singletonList("Authorization"));
+                                                    return cors;
+                                                  }
+                                                }))
       .authorizeHttpRequests(requests -> requests.requestMatchers("/auth/register", "/auth/login").permitAll()
-      .anyRequest().authenticated())  //  les autres routes  doivent s'authentifier
-      .authenticationProvider(authenticationProvider)// AuthenticationProvider personnalisé
-      // JWT filter avant le filtre UsernamePasswordAuthenticationFilter
+      .anyRequest().authenticated())
+      .authenticationProvider(authenticationProvider)
       .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
 

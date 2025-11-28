@@ -99,3 +99,5 @@ public class AuthController {
     return ResponseEntity.ok(userService.convertEntityToDto(activedUser));
   }
 }
+
+

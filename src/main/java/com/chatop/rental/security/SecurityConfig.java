@@ -1,4 +1,5 @@
 package com.chatop.rental.security;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,37 +11,60 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+
   private final CustomAuthenticationProvider authenticationProvider;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-    http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .csrf(csrf->csrf.disable())
-        .cors(cors -> cors.configurationSource(new CorsConfigurationSource()
-                                                {
-                                                  @Override
-                                                  public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                                                    CorsConfiguration cors = new CorsConfiguration();
-                                                    cors.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-                                                    cors.setAllowedMethods(Collections.singletonList("*"));
-                                                    cors.setAllowedHeaders(Collections.singletonList("*"));
-                                                    cors.setExposedHeaders(Collections.singletonList("Authorization"));
-                                                    return cors;
-                                                  }
-                                                }))
-      .authorizeHttpRequests(requests -> requests.requestMatchers("/auth/register", "/auth/login").permitAll()
-      .anyRequest().authenticated())
+    http
+      .csrf(csrf -> csrf.disable())
+      .sessionManagement(session ->
+        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      )
+      .cors(cors -> cors.configurationSource(corsConfiguration()))
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers(
+          "/swagger-ui.html",
+          "/swagger-ui/**",
+          "/v3/api-docs/**",
+          "/api-docs/**",
+          "/swagger-resources/**",
+          "/webjars/**",
+          "/auth/register",
+          "/auth/login",
+          "/uploads/**"    // ⬅⬅⬅ PERMET D'ACCCEDER AUX IMAGES
+        ).permitAll()
+        .anyRequest().authenticated()
+      )
       .authenticationProvider(authenticationProvider)
       .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-    return http.build();
 
+    return http.build();
   }
 
-
+  /**
+   * CORS pour Angular 4200
+   */
+  @Bean
+  public CorsConfigurationSource corsConfiguration() {
+    return new CorsConfigurationSource() {
+      @Override
+      public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedOrigins(List.of("http://localhost:4200"));
+        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        cors.setAllowedHeaders(List.of("*"));
+        cors.setExposedHeaders(List.of("Authorization"));
+        cors.setAllowCredentials(true);
+        return cors;
+      }
+    };
+  }
 }

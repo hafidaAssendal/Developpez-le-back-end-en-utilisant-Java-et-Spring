@@ -21,7 +21,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     String email = authentication.getName();
     String password = authentication.getCredentials().toString();
-
+    System.out.println("Login attempt: " + email + " / " + password);
     var userOpt = userRepository.findByEmail(email);
     if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) {
       throw new RuntimeException("Invalid credentials");

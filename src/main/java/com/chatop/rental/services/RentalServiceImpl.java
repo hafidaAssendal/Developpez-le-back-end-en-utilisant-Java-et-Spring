@@ -55,7 +55,7 @@ public class RentalServiceImpl implements RentalService {
     rental.setOwner(authenticatedUser);
     // Assigner le nom du fichier s’il existe
     if (pictureName != null) {
-      rental.setPicture(pictureName);
+      rental.setPicture("/uploads/"+pictureName);
     }
    // Sauvegarde
     return rentalRepository.save(rental);
@@ -89,7 +89,7 @@ public class RentalServiceImpl implements RentalService {
   public List<RentalResponseDTO> getAllRentals() {
 
     return rentalRepository.findAll().stream()// ajouter la liste dans un stream
-      .map(rental -> convertEntityToDto(Optional.ofNullable(rental)))// appliquer la fonction convert pour chaque element avec conversion de rental à optional
+      .map(rental -> convertEntityToDto(Optional.ofNullable(rental)))   // appliquer la fonction convert pour chaque element avec conversion de rental à optional
       .collect(Collectors.toList()); // converti en liste;
   }
 

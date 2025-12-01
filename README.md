@@ -18,31 +18,30 @@ ChâTop is a back-end application developed with Java and Spring Boot that conne
 - **Spring Boot** 3.x
 - **Spring Security** - JWT Authentication
 - **Spring Data JPA** - Data Persistence
-- **MySQL/PostgreSQL** - Database
+- **MySQL** - Database
 - **Maven** - Dependency Management
 - **Swagger/OpenAPI** - API Documentation
 - **Lombok** - Boilerplate Code Reduction
 
 ##  Project Structure
-
+```
 src/
-├── main/
-│   ├── java/
-│   │   └── com/chatop/
-│   │       ├── configuration/    # SwaggerOpenAPI class  Configuration
-│   │       ├── controller/       # REST Controllers
-│   │       ├── model/            # JPA Entities
-│   │       ├── repository/       # JPA Repositories
-│   │       ├── service/          # Business Services
-│   │       ├── dto/              # Data Transfer Objects
-│   │       └── security/         # Security Configuration
-│   └── resources/
-│       └── application.properties  
-│      
-└── test/
-    └── java/                     
-
-
+  main/
+    java/
+      com/chatop/
+        configuration/     # SwaggerOpenAPI class Configuration
+        controller/        # REST Controllers
+        model/             # JPA Entities
+        repository/        # JPA Repositories
+        service/           # Business Services
+        dto/               # Data Transfer Objects
+        security/          # Security Configuration
+    resources/
+      application.properties
+  test/
+    java/                  # Unit and Integration Tests
+```
+    
 ##  Installation and Setup
 
 ### Prerequisites
@@ -65,11 +64,12 @@ spring.datasource.url=jdbc:mysql://localhost:3306/Rental_db
 spring.datasource.username=your_username
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
+server.servlet.context-path=/api
 
 # JWT Configuration
 jwt.secret=your_secret_key
-jwt.expiration=86400000
-
+jwt.expiration=3600000  
+```
 ### Installation
 
 1. Clone the repository:
@@ -88,7 +88,10 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-The application will be accessible at `http://localhost:8080`
+The application will be accessible at :
+```
+http://localhost:8080/api
+```
 
 ##  API Documentation
 

@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GetUserResponseDTO {
+public class UserGetResponseDTO {
   private Long id;
   private String name;
   private String email;
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
+  private LocalDateTime created_at;
+  private LocalDateTime updated_at;
 }

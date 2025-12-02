@@ -1,9 +1,11 @@
 package com.chatop.rental.DTOs;
 
+import com.chatop.rental.entites.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class RentalResponseDTO {
   private BigDecimal price;
   private String picture;
   private String description;
-  private String createdAt;
-  private String updatedAt;
-  private Long ownerId;
+  private LocalDateTime created_at;
+  private LocalDateTime updated_at;
+  private Long owner_id;
 }

@@ -17,26 +17,24 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
-  private final UserDetailsServiceImpl userDetailsService;
+  private final UserDetailsServiceImpl userDetailsServiceImpl;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request,
                                   HttpServletResponse response,
-                                  FilterChain filterChain) throws ServletException, IOException {
+                                  FilterChain filterChain)
+                                  throws ServletException, IOException {
     final String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
-
     String token = authHeader.substring(7);
     try {
       String email = jwtService.extractEmail(token);
-      // Charger le UserDetails depuis la BDD
-      var userDetails = userDetailsService.loadUserByUsername(email);
-      // Authentication avec UserDetails
+      var userDetails = userDetailsServiceImpl.loadUserByUsername(email);
       UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                                                        userDetails,              // principal = UserDetails
+                                                        userDetails,
                                                         null,
                                                         userDetails.getAuthorities()
                                                       );

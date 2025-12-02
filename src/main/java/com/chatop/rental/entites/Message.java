@@ -1,6 +1,7 @@
 package com.chatop.rental.entites;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "MESSAGES")
 public class Message {
   @Id
@@ -24,13 +26,10 @@ public class Message {
   @UpdateTimestamp
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
-  //Relation vers Rental
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "rental_id", nullable = false)
   private Rental rental;
-  //Relation vers User
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
-
 }

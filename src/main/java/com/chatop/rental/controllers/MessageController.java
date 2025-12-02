@@ -13,55 +13,56 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/messages")
-@Tag(name = "Messages", description = "Endpoints pour la gestion des messages")
+@Tag(name = "Messages", description = "Endpoints  for managing messages")
 public class MessageController {
   @Autowired
   MessageService messageService;
   @Autowired
   AuthenticatedUser authenticatedUser;
 
-  // ============================
-  // POST MESSAGE
-  // ============================
   @PostMapping
   @Operation(
-    summary = "Envoyer un message",
-    description = "Crée un nouveau message et attache automatiquement l’utilisateur authentifié."
+    summary = "Send a message",
+    description = "Creates a new message and automatically associates it with the currently authenticated user."
   )
   @ApiResponses({
-    @ApiResponse(
-      responseCode = "200",
-      description = "Message créé avec succès",
+    @ApiResponse(responseCode = "200",description = "Message successfully created",
+      content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))
+    ),
+    @ApiResponse(responseCode = "400",description = "Bad request",
       content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))
     ),
     @ApiResponse(
-      responseCode = "400",
-      description = "Erreur dans la requête",
+      responseCode = "401", description = "User not authenticated or access denied",
       content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))
     ),
     @ApiResponse(
-      responseCode = "401",
-      description = "Non authentifié",
-      content = @Content
+      responseCode = "500",description = "Internal server error",
+      content = @Content(schema = @Schema(implementation = MessageResponseDTO.class))
     )
   })
-  public ResponseEntity<MessageResponseDTO> postMessage(@RequestBody MessageRequestDTO request) {
+
+  public MessageResponseDTO postMessage(@RequestBody MessageRequestDTO request) {
     try {
-      User user = authenticatedUser.get();
-      // Remplacer le user_id du DTO par celui de l’utilisateur authentifié
-      request.setUser_id(user.getId());
-      return ResponseEntity.ok(messageService.createMessage(request));
+        Long authenticatedUserId = authenticatedUser.get().getId();
+        if (!authenticatedUserId.equals(request.getUser_id())) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+          "Not allowed User.");
+      }
+      return messageService.createMessage(request);
+    } catch (IllegalArgumentException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request: " + e.getMessage(), e);
     } catch (Exception e) {
-      return ResponseEntity.badRequest()
-        .body(new MessageResponseDTO("Error : " + e.getMessage()));
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage(), e);
     }
   }
-
 }
 
 

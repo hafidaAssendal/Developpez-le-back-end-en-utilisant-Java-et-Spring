@@ -2,11 +2,11 @@ package com.chatop.rental.entites;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Rental {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +32,8 @@ public class Rental {
   @UpdateTimestamp
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
-  // Relation vers User
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "owner_id", nullable = false)
-  private User owner;
-  //@Column(name = "owner_id", nullable = false)
-    //  private Integer ownerId;*/
+  private User ownerId;
+
 }

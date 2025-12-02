@@ -16,7 +16,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
   private final CustomAuthenticationProvider authenticationProvider;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -29,6 +29,9 @@ public class SecurityConfig {
         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       )
       .cors(cors -> cors.configurationSource(corsConfiguration()))
+      .exceptionHandling(ex -> ex
+        .authenticationEntryPoint(customAuthenticationEntryPoint))
+
       .authorizeHttpRequests(auth -> auth
         .requestMatchers(
           "/swagger-ui.html",
@@ -39,7 +42,7 @@ public class SecurityConfig {
           "/webjars/**",
           "/auth/register",
           "/auth/login",
-          "/uploads/**"    // ⬅⬅⬅ PERMET D'ACCCEDER AUX IMAGES
+          "/uploads/**"    //  DOSSIER DES IMAGES
         ).permitAll()
         .anyRequest().authenticated()
       )
@@ -48,9 +51,11 @@ public class SecurityConfig {
 
     return http.build();
   }
-  /**
-   * CORS pour Angular 4200
-   */
+
+  //==============================
+  // CORS pour Angular 4200
+  //==============================
+
   @Bean
   public CorsConfigurationSource corsConfiguration() {
     return new CorsConfigurationSource() {

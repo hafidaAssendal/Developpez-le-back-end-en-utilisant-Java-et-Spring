@@ -9,18 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 @Component
 public class AuthenticatedUser {
 
   @Autowired
   private UserService userService;
 
-  // Récupère l'utilisateur authentifié depuis le contexte Spring Security.
   public User get() {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
     if (principal instanceof UserDetails userDetails) {
       String email = userDetails.getUsername();
       return userService.getUserByEmail(email)
@@ -30,11 +26,4 @@ public class AuthenticatedUser {
     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED USER  ");
   }
 
-  public boolean isAuthenticated() {
-    try {
-      return get() != null;
-    } catch (ResponseStatusException e) {
-      return false;
-    }
-  }
 }

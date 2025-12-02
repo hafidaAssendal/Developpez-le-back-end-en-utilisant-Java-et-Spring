@@ -6,14 +6,11 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class RentalRequestDTO {
   private String name;
   private BigDecimal surface;
   private BigDecimal price;
-  private String picture;
   private String description;
-  private Long ownerId;
-
 }

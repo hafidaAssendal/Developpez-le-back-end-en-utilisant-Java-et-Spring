@@ -53,14 +53,9 @@ src/
 
 ### Database Configuration
 
-1. Create a database:
-```sql
-CREATE DATABASE Rental_db;
-```
-
-2. Configure the `application.properties` file:
+ Configure the `application.properties` file:
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/Rental_db
+spring.datasource.url=jdbc:mysql://localhost:3306/Rental_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
 spring.datasource.username=your_username
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
@@ -87,6 +82,11 @@ mvn clean install
 ```bash
 mvn spring-boot:run
 ```
+4. With an IDE:
+
+   Open the project in IntelliJ IDEA or Eclipse
+
+   Run the main class annotated with @SpringBootApplication
 
 The application will be accessible at :
 ```
@@ -97,7 +97,7 @@ http://localhost:8080/api
 
 Once the application is running, Swagger documentation is accessible at:
 ```
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/api/swagger-ui.html
 ```
 
 ### Main Endpoints

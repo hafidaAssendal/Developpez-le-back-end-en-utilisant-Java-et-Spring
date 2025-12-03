@@ -128,6 +128,77 @@ The application uses JWT (JSON Web Token) for authentication. To access protecte
 ```
 Authorization: Bearer your_jwt_token
 ```
+
+---
+
+## Front-end Setup
+     The front-end of this application is developed using Angular and can be accessed at http://localhost:4200.
+### Angular Installation
+
+1. Clone the front-end repository:
+```bash
+git clone https://github.com/OpenClassrooms-Student-Center/P3-Full-Stack-portail-locataire
+```
+
+2. Navigate to project directory:
+```bash
+cd P3-Full-Stack-portail-locataire
+```
+
+3. Install dependencies:
+```bash
+npm install
+```
+
+### Front-end Configuration
+   
+#### Environment Configuration
+
+Update the `baseUrl` in your environment files:
+
+```typescript
+// src/environments/environment.ts and src/environments/environment.prod.ts
+export const environment = {
+  baseUrl: 'http://localhost:8080/api/'
+};
+```
+
+#### Proxy Configuration
+
+Update your `proxy.config.json` file:
+
+```json
+{
+  "/api/*": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
+```
+
+### Running the Front-end
+
+Start the development server:
+
+```bash
+npm run start
+```
+
+The application will be available at `http://localhost:4200`.
+
+---
+## Troubleshooting
+
+### Front-end Connection Issues
+
+If you encounter connection issues:
+
+1. Verify the back-end is running on `http://localhost:8080`
+2. Check that the `baseUrl` in your environment file matches your back-end API endpoint
+3. Ensure the proxy configuration is correctly set up in `proxy.config.json`
+
 ##  Author
 Hafida Assendal
 

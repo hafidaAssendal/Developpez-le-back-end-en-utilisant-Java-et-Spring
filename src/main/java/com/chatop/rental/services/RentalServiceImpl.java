@@ -66,6 +66,9 @@ public class RentalServiceImpl implements RentalService {
     }
 
     modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    modelMapper.typeMap(RentalRequestDTO.class, Rental.class)
+                .addMappings(mapper
+                              -> mapper.skip(Rental::setOwnerId));
     modelMapper.map(dto, existingRental);
     return rentalRepository.save(existingRental);
   }

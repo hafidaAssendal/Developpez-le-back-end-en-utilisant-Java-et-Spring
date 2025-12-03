@@ -48,7 +48,7 @@ src/
 
 - JDK 17 or higher
 - Maven 3.6+
-- MySQL 8.0+ or PostgreSQL 12+
+- MySQL 8.0+ 
 - An IDE (IntelliJ IDEA, Eclipse, VS Code)
 
 ### Database Configuration

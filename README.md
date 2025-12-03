@@ -53,7 +53,12 @@ src/
 
 ### Database Configuration
 
- Configure the `application.properties` file:
+1. Prerequisites
+- MySQL 8.0 or higher installed
+- Access to MySQL via command line or a client (MySQL Workbench, phpMyAdmin, etc.)
+
+2. Configure the `application.properties` file:
+  Edit the file `src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/Rental_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
 spring.datasource.username=your_username

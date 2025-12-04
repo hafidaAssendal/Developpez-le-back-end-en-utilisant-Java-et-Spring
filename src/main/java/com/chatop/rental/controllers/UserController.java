@@ -45,10 +45,10 @@ public class UserController {
     @ApiResponse(responseCode = "401",description = "User not authenticated",content = @Content)
   })
   public ResponseEntity<UserGetResponseDTO> getUser(@PathVariable Long id) {
-     User user = userService.getUserById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    return ResponseEntity.ok(userService.convertEntityToDto(user));
 
+       User user = userService.getUserById(id)
+         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));// 404
+       return ResponseEntity.ok(userService.convertEntityToDto(user));
   }
 }
 

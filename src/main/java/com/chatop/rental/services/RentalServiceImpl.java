@@ -30,6 +30,7 @@ public class RentalServiceImpl implements RentalService {
   private ModelMapper modelMapper;
 
   private final Path uploadDir = Paths.get("uploads");
+
   public RentalServiceImpl() {
     try {
       Files.createDirectories(uploadDir);
@@ -39,7 +40,7 @@ public class RentalServiceImpl implements RentalService {
   }
 
   @Override
-  public Rental createRental(RentalRequestDTO dto, MultipartFile file, User authenticatedUser) throws IOException {
+  public Rental createRental(RentalRequestDTO dto, MultipartFile file, User authenticatedUser) {
     Rental rental = modelMapper.map(dto, Rental.class);
     rental.setOwnerId(authenticatedUser);
     try {
@@ -65,11 +66,12 @@ public class RentalServiceImpl implements RentalService {
       throw new AccessDeniedException("You are not the owner of this rental.");
     }
 
-    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-    modelMapper.typeMap(RentalRequestDTO.class, Rental.class)
-                .addMappings(mapper
-                              -> mapper.skip(Rental::setOwnerId));
-    modelMapper.map(dto, existingRental);
+    existingRental.setName(dto.getName());
+    existingRental.setPrice(dto.getPrice());
+    existingRental.setSurface(dto.getSurface());
+    existingRental.setDescription(dto.getDescription());
+    existingRental.setOwnerId(authenticatedUser);
+
     return rentalRepository.save(existingRental);
   }
 
@@ -81,8 +83,8 @@ public class RentalServiceImpl implements RentalService {
   @Override
   public List<RentalResponseDTO> getAllRentals() {
     return rentalRepository.findAll().stream()
-                           .map(this::convertEntityToDto)
-                           .collect(Collectors.toList());
+      .map(this::convertEntityToDto)
+      .collect(Collectors.toList());
   }
 
   @Override
@@ -90,7 +92,8 @@ public class RentalServiceImpl implements RentalService {
     if (rental == null) return null;
     modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
     modelMapper.typeMap(Rental.class, RentalResponseDTO.class)
-               .addMappings(mapper -> mapper.skip(RentalResponseDTO::setOwner_id));
+      .addMappings(
+        mapper -> mapper.skip(RentalResponseDTO::setOwner_id));
     RentalResponseDTO dto = modelMapper.map(rental, RentalResponseDTO.class);
 
     if (rental.getOwnerId() != null) {

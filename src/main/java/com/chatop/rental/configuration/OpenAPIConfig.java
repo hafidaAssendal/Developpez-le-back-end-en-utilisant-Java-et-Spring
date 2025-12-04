@@ -12,8 +12,22 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 
 @Configuration
 public class OpenAPIConfig {
+
   @Bean
   public OpenAPI customOpenAPI() {
+    // Créer le SecurityScheme pour JWT
+    SecurityScheme securityScheme = new SecurityScheme()
+      .name("BearerAuth")
+      .type(SecurityScheme.Type.HTTP)
+      .scheme("bearer")
+      .bearerFormat("JWT")
+      .in(SecurityScheme.In.HEADER)
+      .description("JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'");
+
+    // Créer le SecurityRequirement
+    SecurityRequirement securityRequirement = new SecurityRequirement()
+      .addList("BearerAuth");
+
     return new OpenAPI()
       .info(new Info()
         .title("ChaTop API")
@@ -29,14 +43,8 @@ public class OpenAPIConfig {
         .description("Local server")
       )
       .components(new Components()
-        .addSecuritySchemes("BearerAuth",
-          new SecurityScheme()
-            .type(SecurityScheme.Type.HTTP)
-            .scheme("bearer")
-            .bearerFormat("JWT")
-            .description("JWT Authorization header using the Bearer scheme")
-        )
+        .addSecuritySchemes("BearerAuth", securityScheme)
       )
-      .addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
+      .addSecurityItem(securityRequirement);
   }
 }

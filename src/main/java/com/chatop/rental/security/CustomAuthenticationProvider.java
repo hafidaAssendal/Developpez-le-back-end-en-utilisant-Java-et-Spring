@@ -1,4 +1,5 @@
 package com.chatop.rental.security;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     String password = authentication.getCredentials().toString();
     UserDetails userDetails= userDetailsService.loadUserByUsername(email);
     if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-      throw new RuntimeException("Invalid credentials");
+      throw new BadCredentialsException("Invalid email or password");
     }
 
     return new UsernamePasswordAuthenticationToken(

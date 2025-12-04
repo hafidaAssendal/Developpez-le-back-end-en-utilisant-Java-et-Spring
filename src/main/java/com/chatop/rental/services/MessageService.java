@@ -7,6 +7,6 @@ import com.chatop.rental.entites.Message;
 import java.io.IOException;
 
 public interface MessageService {
-  MessageResponseDTO createMessage(MessageRequestDTO messageDTO) throws IOException;
+  MessageResponseDTO createMessage(MessageRequestDTO messageDTO);
   Message convertDtoToEntity(MessageRequestDTO dto);
  }

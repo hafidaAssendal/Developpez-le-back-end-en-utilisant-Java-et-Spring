@@ -11,10 +11,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -49,12 +54,12 @@ public class RentalController {
     @ApiResponse(responseCode = "401",description = "Unauthorized: authentication required",content = @Content)
   })
   public ResponseEntity<RentalResponseDTO> getRental(@PathVariable Long id) {
-    Optional<Rental> rental = rentalService.getRentalById(id);
-    if (rental.isEmpty()) return ResponseEntity.notFound().build();
-    return ResponseEntity.ok(rentalService.convertEntityToDto(rental.get()));
+    Rental rental = rentalService.getRentalById(id)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rental not found"));//404
+    return ResponseEntity.ok(rentalService.convertEntityToDto(rental));
   }
 
-  @PostMapping
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Create a new rental",description = "Creates a new rental with an image (multipart upload) and form data.")
   @ApiResponses({
     @ApiResponse(responseCode = "200",description = "Rental created successfully",
@@ -62,6 +67,7 @@ public class RentalController {
     @ApiResponse(responseCode = "401",description = "Unauthorized: user not authenticated",content = @Content)
   })
   public ResponseEntity<StatusRentalResponseDTO> postRental(
+    @ParameterObject
     @ModelAttribute RentalRequestDTO rentalDto,
     @RequestParam("picture") MultipartFile file) throws IOException {
     User ActivedUser = authenticatedUser.get();
@@ -83,12 +89,9 @@ public class RentalController {
   public ResponseEntity<StatusRentalResponseDTO> putRental(@PathVariable Long id,
                                                            @ModelAttribute RentalRequestDTO rentalDto) {
     User ActivedUser = authenticatedUser.get();
-    try {
-      rentalService.updateRental(id, rentalDto, ActivedUser);
-      return ResponseEntity.ok(new StatusRentalResponseDTO(" rental updated successfully "));
-    } catch (RuntimeException e) {
-      return ResponseEntity.notFound().build();
-    }
+    rentalService.updateRental(id, rentalDto, ActivedUser);
+    return ResponseEntity.ok(new StatusRentalResponseDTO(" rental updated successfully "));
+
   }
 }
 

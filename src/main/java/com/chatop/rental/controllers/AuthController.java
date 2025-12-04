@@ -1,9 +1,6 @@
 package com.chatop.rental.controllers;
 
-import com.chatop.rental.DTOs.UserGetResponseDTO;
-import com.chatop.rental.DTOs.UserTokenResponseDTO;
-import com.chatop.rental.DTOs.UserLoginRequestDTO;
-import com.chatop.rental.DTOs.UserRegisterRequestDTO;
+import com.chatop.rental.DTOs.*;
 import com.chatop.rental.entites.User;
 import com.chatop.rental.security.AuthenticatedUser;
 import com.chatop.rental.security.JwtService;
@@ -16,20 +13,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-@Tag(name = "Authentication", description =  "Endpoints for managing user authentication")
+@Tag(name = "Authentication", description = "Endpoints for managing user authentication")
 
 public class AuthController {
   @Autowired
@@ -42,48 +35,36 @@ public class AuthController {
   AuthenticatedUser authenticatedUser;
 
   @PostMapping("/register")
-  @Operation(summary = "Register a new user",description = "Creates a new user and returns a JWT token.")
-   @ApiResponses({
-    @ApiResponse(responseCode = "200",description = "Registration successful",
+  @Operation(summary = "Register a new user", description = "Creates a new user and returns a JWT token.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Registration successful",
       content = @Content(schema = @Schema(implementation = UserTokenResponseDTO.class))
     ),
   })
   public ResponseEntity<UserTokenResponseDTO> register(@RequestBody UserRegisterRequestDTO registerUserRequestDTO) {
-    try {
       User user = userService.convertDTOToEntity(registerUserRequestDTO);
       User savedUser = userService.saveUser(user);
       String token = jwtService.generateToken(savedUser.getEmail());
       return ResponseEntity.ok(new UserTokenResponseDTO(token));
-    } catch (IllegalArgumentException ex) {
-      // Email existe déjà ou données invalides
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
-    } catch (Exception ex) {
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Registration failed", ex);
-    }
-
   }
 
   @PostMapping("/login")
-  @Operation(summary = "Login",description = "Authenticates the user and returns a JWT.")
+  @Operation(summary = "Login", description = "Authenticates the user and returns a JWT.")
   @ApiResponses({
-    @ApiResponse(responseCode = "200",description = "Login successful",
+    @ApiResponse(responseCode = "200", description = "Login successful",
       content = @Content(schema = @Schema(implementation = UserTokenResponseDTO.class))
     ),
-    @ApiResponse(responseCode = "401",description = "Authentication failed",content = @Content)
+    @ApiResponse(responseCode = "401", description = "Authentication failed", content = @Content)
   })
   public ResponseEntity<UserTokenResponseDTO> login(@RequestBody UserLoginRequestDTO loginDTO) {
-    try {
-        Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
-      );
+
+      Authentication authentication = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(loginDTO.getEmail(),
+                                                loginDTO.getPassword()));
       String token = jwtService.generateToken(authentication.getName());
       return ResponseEntity.ok(new UserTokenResponseDTO(token));
-    } catch (Exception ex) {
+   }
 
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed", ex);
-    }
-
-  }
   @GetMapping("/me")
   @Operation(
     summary = "Current authenticated user profile",
@@ -96,15 +77,10 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "User not authenticated", content = @Content)
   })
   public ResponseEntity<UserGetResponseDTO> getAuthUser() {
-    try {
-       User activeUser = authenticatedUser.get();
-       UserGetResponseDTO userDto = userService.convertEntityToDto(activeUser);
-       return ResponseEntity.ok(userDto);
-    } catch (Exception ex) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated", ex);
-    }
+    User activeUser = authenticatedUser.get();
+    UserGetResponseDTO userDto = userService.convertEntityToDto(activeUser);
+    return ResponseEntity.ok(userDto);
   }
-
 }
 
 

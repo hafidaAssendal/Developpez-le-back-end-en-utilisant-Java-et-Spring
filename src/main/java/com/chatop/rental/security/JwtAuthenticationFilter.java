@@ -40,14 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                                       );
 
       SecurityContextHolder.getContext().setAuthentication(authToken);
-
-
     } catch (Exception e) {
+
       System.out.println("JWT invalid: " + e.getMessage());
     }
-
     filterChain.doFilter(request, response);
   }
-
-
 }

@@ -11,7 +11,6 @@ import com.chatop.rental.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -33,7 +32,7 @@ public class MessageServiceImpl implements MessageService {
     Rental rental = rentalRepository.findById(dto.getRental_id())
                                      .orElseThrow(() -> new RuntimeException("Rental not found"));
     User user = userRepository.findById(dto.getUser_id())
-                               .orElseThrow(() -> new RuntimeException("User not found"));
+                                     .orElseThrow(() -> new RuntimeException("User not found"));
     return Message.builder()
                   .message(dto.getMessage())
                   .user(user)

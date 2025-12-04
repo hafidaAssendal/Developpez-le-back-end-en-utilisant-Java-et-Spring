@@ -52,9 +52,9 @@ public class SecurityConfig {
     return http.build();
   }
 
-  //==============================
+
   // CORS pour Angular 4200
-  //==============================
+
 
   @Bean
   public CorsConfigurationSource corsConfiguration() {
@@ -63,7 +63,7 @@ public class SecurityConfig {
       public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowedOrigins(List.of("http://localhost:4200"));
-        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        cors.setAllowedMethods(List.of("GET", "POST", "PUT"));
         cors.setAllowedHeaders(List.of("*"));
         cors.setExposedHeaders(List.of("Authorization"));
         cors.setAllowCredentials(true);

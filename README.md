@@ -54,21 +54,44 @@ src/
 ### Database Configuration
 
 1. Prerequisites
-- MySQL 8.0 or higher installed
-- Access to MySQL via command line or a client (MySQL Workbench, phpMyAdmin, etc.)
+   - MySQL 8.0 or higher installed
+   - Access to MySQL via command line or a client (MySQL Workbench, phpMyAdmin, etc.)
 
-2. Configure the `application.properties` file:
-  Edit the file `src/main/resources/application.properties`:
+2. Environment Configuration
+ 
+     This application uses environment variables for sensitive configuration data. The following variables must be set before running the application:
+
+```bash
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+JWT_SECRET_KEY=your_jwt_secret
+```
+  2.1  Setup
+
+**IntelliJ IDEA:** Run → Edit Configurations → Environment variables → Add the variables above (separated by ;)
+
+**Command Line:**
+```bash
+DB_USERNAME=your_username DB_PASSWORD=your_password JWT_SECRET_KEY=your_jwt_secret ./mvnw spring-boot:run
+```
+
+**VS Code / Eclipse:** Configure environment variables in your launch configuration file or run configuration settings.
+
+3. Configure the `application.properties` file:
+
+       Edit the file `src/main/resources/application.properties`:
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/Rental_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+
+# Database Configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/Your_DB?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
 spring.jpa.hibernate.ddl-auto=update
 server.servlet.context-path=/api
 
 # JWT Configuration
-jwt.secret=your_secret_key
-jwt.expiration=3600000  
+app.secret-key=${JWT_SECRET_KEY}
+app.exp-time=3600000
 ```
 ### Installation
 
